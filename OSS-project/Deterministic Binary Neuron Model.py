@@ -23,8 +23,8 @@ def statesUpdate(currentStates = []):
     else: return currentStates
 
 if __name__ == "__main__":
-    #initialStates = [0, 0, 0, 0]
-    initialStates = [1, 1, 1, 1]
+    initialStates = [0, 0, 0, 0]
+    #initialStates = [1, 1, 1, 1]
     #initialStates = [0,1,0,1]
     currentStates = initialStates
     energy = []
