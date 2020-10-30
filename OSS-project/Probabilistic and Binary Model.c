@@ -67,10 +67,10 @@ int main(){
     //for(i=0; i<rollDie;i++){
     //    if(inputs[])
     //}
-/***
+
     for(i=0; i<size; i++){
-        //inputs[i] = 0+1.0*(rand()%RAND_MAX)/RAND_MAX*(1-0); generate random number in [0,1]
-        inputs[i] = rand();
+        inputs[i] = 0+1.0*(rand()%RAND_MAX)/RAND_MAX*(1-0); generate random number in [0,1]
+       
         if (inputs[i] <= testNumber){
             y[i] = 1;
             counter++; 
@@ -86,6 +86,6 @@ int main(){
         printf("Result is %.5f \n", y[i]);
     }
     printf("The times of y == 1 is %d \n", counter);
-***/
+
     return 0;
 }
