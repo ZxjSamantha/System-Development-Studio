@@ -1,9 +1,9 @@
 version: 2.1
-  jobs:
-    build-macos:
-      macos:
-        xcode: 11.3.0
+  jobs:  # 1 回の実行の基本作業単位
+    build-macos: # 「ワークフロー」を使用しない実行では、エントリポイントとして `build` ジョブが必要です 
+      macos: # macOS Executor を使用していることを示します
+        xcode: 11.3.0 # 選択された Xcode のバージョン
           - image: circleci/node:4.8.2 # ジョブのコマンドが実行されるプライマリ コンテナ
-      steps:
+      steps: # 実行する一連のコマンド
         - checkout # プロジェクト ディレクトリ内のコードをチェック アウトします
         - run: echo "hello world" # `echo` コマンドを実行します
