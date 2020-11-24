@@ -1,9 +1,14 @@
 version: 2.1
-jobs: 
-  build: 
-    macos:  
-      xcode: 11.3.0 # 選択された Xcode のバージョン
-    steps: # 実行する一連のコマンド
-      - checkout  # ユーザーのバージョン管理システムからコードをプル ダウンします
-      - run: echo "hello world"
+
+orbs:
+  win: circleci/windows@2.2.0
+  
+jobs:
+  build:
+    executor: 
+      name: win/default
+      size: "medium"
          
+    steps:
+      - checkout
+      - run: Write-Host 'Hello, Windows'
