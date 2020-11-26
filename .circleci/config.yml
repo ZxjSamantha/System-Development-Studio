@@ -1,14 +1,9 @@
-version: 2.1
+version: 2
 
-orbs:
-  win: circleci/windows@2.2.0
-  
-jobs: 
+jobs:
   build:
-    executor:
-      name: win/default
-      size: "medium"
-      
+    machine:
+      image: windows.medium 
       steps:
         - checkout
         - run: Write-Host 'Hello, Windows'
