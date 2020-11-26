@@ -2,17 +2,17 @@ version: 2.1
 
 orbs:
   win: circleci/windows@2.2.0
-  
-jobs: 
+
+jobs:
   build:
-    executor:
+    executor: 
       name: win/default
       size: "medium"
       
-      steps:
-        - checkout
-        - run: Write-Host 'Hello, Windows'
-        - add_ssh_keys:
-            fingerprints:
-              - "2d:be:57:e7:a7:5a:53:24:b6:89:86:de:f2:13:cb:af"
-        - run: sh ./deploy.sh
+    steps:
+      - checkout
+      - run: Write-Host 'Hello, Windows'
+      - add_ssh_keys:
+          fingerprints:
+            - "2d:be:57:e7:a7:5a:53:24:b6:89:86:de:f2:13:cb:af"
+      - run: sh ./deploy.sh
