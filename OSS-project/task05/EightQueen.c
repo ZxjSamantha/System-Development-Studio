@@ -28,6 +28,6 @@ void lay(int i) {
 
 int main(void) {
   lay(1);
-  printf("%d皇后共计%d个解\n", QUEENS, inc);
+  printf("There are %d solutions for %d queens\n", inc, QUEENS);
   return 0;
 }
