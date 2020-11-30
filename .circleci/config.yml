@@ -14,19 +14,12 @@ jobs:
     # working_directory: ~/circleci-demo-python-django      
     steps:
       - checkout # check out source code to working directory
-      - restore_cache:
-          keys:
+      - run:            
+         command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
+         shell: powershell.exe
       - run:
-          name: "Install project dependencies"
-          command: dotnet.exe restore
-      - save_cache:
-          paths:
-            - C:\Xinjie\circleci\.nuget\packages
+         command: echo hello && echo world
+         shell: bash.exe
       - run:
-          name: "Run Build step"
-           command: dotnet.exe publish -c Release -r win10-x64
-      - run:
-          name: "Test the executable"
-          command: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
-       - store_artifacts:
-          path: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
+         command: echo hello & echo world
+         shell: cmd.exe
