@@ -6,7 +6,6 @@ orbs:
 
 jobs:
   build:
-    #C:\Users\Xinjie\AppData\Local\Temp\MicrosoftEdgeDownloads\2a2117dc-5f3f-40e4-ba5e-b3bfb35f28ea\System-Development-Studio-main.zip\System-Development-Studio-main
      executor: 
        name: win/default
        #working_directory: ~\OSS-project\task02
@@ -17,5 +16,6 @@ jobs:
      steps:
        - checkout # check out source code to working directory
        - run:            
-          command: python -u test_BM1.py
+          command: python -u C:\Users\Xinjie\AppData\Local\Temp\MicrosoftEdgeDownloads\2a2117dc-5f3f-40e4-ba5e-b3bfb35f28ea\System-Development-Studio-main.zip\System-Development-Studio-main
+test_BM1.py
           shell: powershell.exe
