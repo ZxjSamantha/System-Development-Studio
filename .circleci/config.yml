@@ -8,40 +8,25 @@ jobs:
   build:
     executor: 
       name: win/default
-      size: "medium"
+      # size: "medium"
       shell: powershell.exe
       
-    working_directory: ~/circleci-demo-python-django      
+    # working_directory: ~/circleci-demo-python-django      
     steps:
       - checkout # check out source code to working directory
-      - run: systeminfo
-      - run:
-          name: "Check docker"
-          shell: powershell.exe
-          command: |
-            docker info
-            docker run hello-world:nanoserver-1809
-      - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
       - restore_cache:
-      # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          keys:
       - run:
-          command: |
-            sudo pip install pipenv
-            pipenv install
-      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          name: "Install project dependencies"
+          command: dotnet.exe restore
+      - save_cache:
           paths:
-            - "venv"
+            - C:\Xinjie\circleci\.nuget\packages
       - run:
-          command: |
-            pipenv run python manage.py test
-      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: test-results
-      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: test-results
-          destination: tr1
-  
-  
-  
+          name: "Run Build step"
+           command: dotnet.exe publish -c Release -r win10-x64
+      - run:
+          name: "Test the executable"
+          command: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
+       - store_artifacts:
+          path: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
