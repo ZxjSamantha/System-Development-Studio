@@ -13,13 +13,7 @@ jobs:
       
     # working_directory: ~/circleci-demo-python-django      
     steps:
-      - checkout # check out source code to working directory
+      - checkout main# check out source code to working directory
       - run:            
-         command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
+         command: python -u test_BM1.py
          shell: powershell.exe
-      - run:
-         command: echo hello && echo world
-         shell: bash.exe
-      - run:
-         command: echo hello & echo world
-         shell: cmd.exe
