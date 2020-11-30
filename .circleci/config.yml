@@ -1,3 +1,4 @@
+
 version: 2.1
 
 orbs:
@@ -8,24 +9,39 @@ jobs:
     executor: 
       name: win/default
       size: "medium"
+      shell: powershell.exe
       
+    working_directory: ~/circleci-demo-python-django      
     steps:
-      - checkout
-      - run: Write-Host 'Hello, Windows'
-        # - add_ssh_keys:
-        #    fingerprints:
-        #      - "2d:be:57:e7:a7:5a:53:24:b6:89:86:de:f2:13:cb:af"
-        #- run: sh ./deploy.sh
+      - checkout # check out source code to working directory
+      - run: systeminfo
       - run:
-          name: Creating Dummy Artifacts
+          name: "Check docker"
+          shell: powershell.exe
           command: |
-            echo "my artifact file" > /tmp/artifact-1;
-            mkdir /tmp/artifacts;
-            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
-
-      - store_artifacts:
-          path: /tmp/artifact-1
-          destination: artifact-file
-
-      - store_artifacts:
-          path: /tmp/artifacts
+            docker info
+            docker run hello-world:nanoserver-1809
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - restore_cache:
+      # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+      - run:
+          command: |
+            sudo pip install pipenv
+            pipenv install
+      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - "venv"
+      - run:
+          command: |
+            pipenv run python manage.py test
+      - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: test-results
+      - store_artifacts: # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: test-results
+          destination: tr1
+  
+  
+  
