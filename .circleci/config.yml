@@ -6,14 +6,16 @@ orbs:
 
 jobs:
   build:
-    executor: 
-      name: win/default
+    working_directory: ~\OSS-project\task02
+    #C:\Users\Xinjie\AppData\Local\Temp\MicrosoftEdgeDownloads\2a2117dc-5f3f-40e4-ba5e-b3bfb35f28ea\System-Development-Studio-main.zip\System-Development-Studio-main
+     executor: 
+       name: win/default
       # size: "medium"
-      shell: powershell.exe
+       shell: powershell.exe
       
     # working_directory: ~/circleci-demo-python-django      
-    steps:
-      - checkout # check out source code to working directory
-      - run:            
-         command: python -u test_BM1.py
-         shell: powershell.exe
+     steps:
+       - checkout # check out source code to working directory
+       - run:            
+          command: python -u test_BM1.py
+          shell: powershell.exe
