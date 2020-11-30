@@ -9,7 +9,7 @@ jobs:
     #C:\Users\Xinjie\AppData\Local\Temp\MicrosoftEdgeDownloads\2a2117dc-5f3f-40e4-ba5e-b3bfb35f28ea\System-Development-Studio-main.zip\System-Development-Studio-main
      executor: 
        name: win/default
-       working_directory: ~\OSS-project\task02
+       #working_directory: ~\OSS-project\task02
       # size: "medium"
        shell: powershell.exe
       
