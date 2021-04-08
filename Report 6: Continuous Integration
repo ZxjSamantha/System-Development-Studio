@@ -1,0 +1,429 @@
+# Report 6: Continuous Integration 
+## Name: ZHANG XINJIE Student ID Number: 20M14457 
+
+---
+
+Exercise 1: Find two OSS projects that are built on CircleCI. Read the configuration of CircleCI and investigate what it is used for.
+
+There are many OSS projects in the following URL that are built on CircleCI. 
+[OSS Projects with CircleCI](https://circleci.com/docs/2.0/oss/)
+
+React - Facebook's JavaScript based React is built with CircleCI.
+[React](https://github.com/facebook/react)
+
+PyTorch - Data manipulation and Machine Learning platform. 
+[PyTorch](https://github.com/pytorch/pytorch)
+
+The following URL gives an example of the full CircleCI configuration.
+
+[Example Full Configuration](https://circleci.com/docs/2.0/configuration-reference/#example-full-configuration)
+
+The configuration keys that are used in `config.yml` file includes:
+
+- version: `2`, `2.0`, or `2.1`
+
+- orbs: A map of user-selected names to either: orb references(strings) or orb definitions(maps). 
+
+- commands: A command definition defines a sequence of steps as a map to be executed in a job, enabling users to reuse a single command definition across multiple jobs.
+
+- parameters: Pipeline parameters declared for use in the configuration. 
+
+- executors: Executors define the environment in which the steps of a job will be run, allowing users to reuse a single executor definition across multiple jobs.
+
+- jobs: A Workflow is comprised of one or more uniquely named jobs.
+
+- workflows: Used for orchestrating all jobs. Each workflow consists of the workflow name as a key and a map as a value. 
+
+Here is the introduction of getting started with CircleCI:
+
+[Getting Started Introduction](https://circleci.com/docs/2.0/getting-started/)
+
+This is a official demo for python in circleci in the following:
+
+```
+version: 2.1
+orbs:
+  python: circleci/python@1.0.0
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.6.10
+        environment:
+          DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
+      - image: circleci/postgres:9.6.2
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle_test
+    steps:
+      - checkout
+      - python/install-packages
+      - run:
+          name: Run django tests
+          command: |
+            pipenv run python manage.py test
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
+          destination: tr1
+```
+
+---
+
+Exercise 2: Introduce CircleCI to your OSS. Display "Hello World" when pushing.
+
+I followed the tutorial given in the following URL,
+
+[Hello World](https://circleci.com/docs/ja/2.0/hello-world/)
+
+which includes the following configuration:
+
+```
+version: 2.1
+jobs: 
+  build: 
+    macos:  
+      xcode: 11.3.0 # 選択された Xcode のバージョン
+    steps: # 実行する一連のコマンド
+      - checkout  # ユーザーのバージョン管理システムからコードをプル ダウンします
+      - run: echo "hello world"
+```
+
+but received this:
+
+```
+Apologies! Your build didn’t run because you haven’t selected a plan that includes macOS yet. Please change to a Performance Plan. If you have any questions please feel free to contact support.
+```
+
+It seems that macOS is charged without given the free plan...So I tried this on a pc with Windows with the following configuration.
+
+```
+version: 2.1 # Use version 2.1 to enable orb usage.
+
+orbs:
+  win: circleci/windows@2.2.0 # The Windows orb give you everything you need to start using the Windows executor.
+
+jobs:
+  build: # name of your job
+    executor:
+      name: win/default # executor type
+      size: "medium" # resource class, can be "medium", "large", "xlarge", "2xlarge", defaults to "medium" if not specified
+
+    steps:
+      # Commands are run in a Windows virtual machine environment
+      - checkout
+      - run: Write-Host 'Hello, Windows'
+```
+
+And I successed this time! 
+
+```
+#!powershell.exe -ExecutionPolicy Bypass
+Write-Host 'Hello, Windows'
+
+Hello, Windows
+CircleCI received exit code 0
+```
+
+Wonderful moment!
+
+---
+
+Exercise 3: Implement test of the OSS projects automatically with CircleCI. 
+
+Here is a official document for configuring a Python Application on CircleCI:
+
+[Configuring a Python Application on CircleCI](https://circleci.com/docs/2.0/language-python/)
+
+The pipeline of testing an application in Python includes:
+
+1. Specify a version
+
+2. Create a build job
+
+3. Choose an executor type
+
+4. Install dependencies
+
+5. Cache dependencies
+
+6. Run tests
+
+7. Upload and store test results
+
+8. Deploy application 
+
+Here is an advanced example of testing an executable file on Windows:
+
+[Example application](https://circleci.com/docs/2.0/hello-world-windows/)
+
+In my case, I have not successfully implement the test of the OSS project, which may be caused by the configuration of pc.
+
+```
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+jobs:
+  build:
+     executor: 
+       name: win/default
+       #working_directory: ~\OSS-project\task02
+      # size: "medium"
+       shell: powershell.exe
+      
+    # working_directory: ~/circleci-demo-python-django      
+     steps:
+       - checkout # check out source code to working directory
+       - run:            
+          command: python -u ~\test_BM1.py
+          shell: powershell.exe
+```
+
+The output is as the following:
+
+`Spin up environment`:
+
+```
+Build-agent version 1.0.47119-e94cbffd (2020-11-30T10:25:06+0000)
+Creating a dedicated VM with windows-server-2019-vs2019:stable image
+
+Assigned VM request id: 241029283
+  provisioning: ..
+VM 'default-1641b2b1-2b03-47b1-b181-f4f1d7bcf399' has been created
+Initializing agent
+```
+
+`Preparing environment variables`:
+
+```
+Using build environment variables:
+  BASH_ENV=/tmp/.bash_env-5fc4e5e458ce8e385ec1c089-0-build
+  CI=true
+  CIRCLECI=true
+  CIRCLE_BRANCH=circleci-project-setup
+  CIRCLE_BUILD_NUM=59
+  CIRCLE_BUILD_URL=https://circleci.com/gh/ZxjSamantha/System-Development-Studio/59
+  CIRCLE_COMPARE_URL=
+  CIRCLE_JOB=build
+  CIRCLE_NODE_INDEX=0
+  CIRCLE_NODE_TOTAL=1
+  CIRCLE_PREVIOUS_BUILD_NUM=58
+  CIRCLE_PROJECT_REPONAME=System-Development-Studio
+  CIRCLE_PROJECT_USERNAME=ZxjSamantha
+  CIRCLE_REPOSITORY_URL=git@github.com:ZxjSamantha/System-Development-Studio.git
+  CIRCLE_SHA1=ade9e869f6d1920959326b4f724dbc1f44561e10
+  CIRCLE_SHELL_ENV=/tmp/.bash_env-5fc4e5e458ce8e385ec1c089-0-build
+  CIRCLE_STAGE=build
+  CIRCLE_USERNAME=ZxjSamantha
+  CIRCLE_WORKFLOW_ID=a93b0939-1194-4381-be9e-3dc2c58b3907
+  CIRCLE_WORKFLOW_JOB_ID=2802ebfc-a116-4893-aafa-643edd8d1619
+  CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS=
+  CIRCLE_WORKFLOW_WORKSPACE_ID=a93b0939-1194-4381-be9e-3dc2c58b3907
+  CIRCLE_WORKING_DIRECTORY=~/project
+
+Using environment variables from project settings and/or contexts:
+  CIRCLE_JOB=**REDACTED**
+
+The redacted variables listed above will be masked in run step output.
+```
+
+`Checkout code`:
+
+```
+git config --global url.ssh://git@github.com.insteadOf https://github.com
+git config --global gc.auto 0
+git clone git@github.com:ZxjSamantha/System-Development-Studio.git .
+Cloning into '.'...
+Warning: Permanently added the RSA host key for IP address '140.82.112.4' to the list of known hosts.
+Creating .ssh directory
+Adding the following entries to known_hosts:
+github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+
+Writing SSH key for checkout to id_rsa
+git fetch --force origin circleci-project-setup:remotes/origin/circleci-project-setup
+HEAD is now at ade9e86 Update config.yml
+HEAD is now at ade9e86 Update config.yml
+git reset --hard ade9e869f6d1920959326b4f724dbc1f44561e10
+git checkout -q -B circleci-project-setup
+git reset --hard ade9e869f6d1920959326b4f724dbc1f44561e10
+```
+
+`python -u ~\test_BM1.py`
+
+```
+#!powershell.exe
+python -u ~\test_BM1.py
+C:\tools\miniconda3\python.exe: can't open file '~\test_BM1.py': [Errno 2] No such file or directory
+
+Exited with code exit status 1
+CircleCI received exit code 1
+```
+
+---
+
+Exercise 4: Upload artifacts automatically with CircleCI. 
+
+Artifacts persist data after a job is completed and may be used for storage of the outputs of the build process. CircleCI can store this file as an artifacts, keepomh it available after the process has finished. 
+
+If a job produces persistent artifacts such as screenshots, coverage reports, core files, or deployment tarballs, CircleCI can automatically save and link them for users. 
+
+Artifacts will be accessible for thirty days after creation/ 
+
+[Storing Build Artifacts](https://circleci.com/docs/2.0/artifacts/)
+
+To upload artifacts created during builds, use the following example:
+
+```
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0
+
+jobs:
+  build:
+    executor: 
+      name: win/default
+      size: "medium"
+      
+    steps:
+      - checkout
+      - run: Write-Host 'Hello, Windows'
+      - run:
+          name: Creating Dummy Artifacts
+          command: |
+            echo "my artifact file" > /tmp/artifact-1;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
+      - store_artifacts:
+          path: /tmp/artifact-1
+          destination: artifact-file
+
+      - store_artifacts:
+          path: /tmp/artifacts
+```
+
+The `store_artifacts` step uploads two build artifacts: a file (`/tmp/artifact-1`) and a directory (`/tmp/artifacts`).
+After the artifacts successfully upload, view them in the **Artifacts** tab of the **Job page** in the browser. 
+
+There is no limit on the number of `store_artifacts` steps a job can run. 
+
+Currently, `store_artifacts` has two keys: `path` and `destination`. 
+
+- `path` is a path to the file or directory to be uploaded as artifacts.
+
+- `destination` (optional) is a prefix added to the artifacts paths in the artifacts API. The directory of the file specified in `path` is used as the default. 
+
+The output is as the following:
+
+`Spin up environment`:
+
+```
+Build-agent version 1.0.46994-6da821f3 (2020-11-25T08:07:37+0000)
+Creating a dedicated VM with windows-server-2019-vs2019:stable image
+
+Assigned VM request id: 240913797
+  provisioning: ...
+VM 'default-6404b196-3cbf-4914-b85f-cc763a719829' has been created
+Initializing agent
+```
+
+`Preparing environment variables`：
+
+```
+Using build environment variables:
+  BASH_ENV=/tmp/.bash_env-5fc48d9658ce8e385ec12ebe-0-build
+  CI=true
+  CIRCLECI=true
+  CIRCLE_BRANCH=circleci-project-setup
+  CIRCLE_BUILD_NUM=43
+  CIRCLE_BUILD_URL=https://circleci.com/gh/ZxjSamantha/System-Development-Studio/43
+  CIRCLE_COMPARE_URL=
+  CIRCLE_JOB=build
+  CIRCLE_NODE_INDEX=0
+  CIRCLE_NODE_TOTAL=1
+  CIRCLE_PREVIOUS_BUILD_NUM=27
+  CIRCLE_PROJECT_REPONAME=System-Development-Studio
+  CIRCLE_PROJECT_USERNAME=ZxjSamantha
+  CIRCLE_REPOSITORY_URL=git@github.com:ZxjSamantha/System-Development-Studio.git
+  CIRCLE_SHA1=12935c772e6a8e3ca2a0b379e11241b060e7eaf3
+  CIRCLE_SHELL_ENV=/tmp/.bash_env-5fc48d9658ce8e385ec12ebe-0-build
+  CIRCLE_STAGE=build
+  CIRCLE_USERNAME=ZxjSamantha
+  CIRCLE_WORKFLOW_ID=ceea3313-bb24-44a4-a73d-6fe89c376a70
+  CIRCLE_WORKFLOW_JOB_ID=948b2160-dbbc-4c31-9b05-4ff0c3788cee
+  CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS=
+  CIRCLE_WORKFLOW_WORKSPACE_ID=ceea3313-bb24-44a4-a73d-6fe89c376a70
+  CIRCLE_WORKING_DIRECTORY=~/project
+
+Using environment variables from project settings and/or contexts:
+  CIRCLE_JOB=**REDACTED**
+
+The redacted variables listed above will be masked in run step output.
+```
+
+`Checkout code`:
+
+```
+Creating .ssh directory
+Adding the following entries to known_hosts:
+github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+
+Writing SSH key for checkout to id_rsa
+git config --global url.ssh://git@github.com.insteadOf https://github.com
+git config --global gc.auto 0
+git clone git@github.com:ZxjSamantha/System-Development-Studio.git .
+Cloning into '.'...
+Warning: Permanently added the RSA host key for IP address '140.82.113.4' to the list of known hosts.
+git fetch --force origin circleci-project-setup:remotes/origin/circleci-project-setup
+HEAD is now at 12935c7 Update config for uploading artifacts
+HEAD is now at 12935c7 Update config for uploading artifacts
+git reset --hard 12935c772e6a8e3ca2a0b379e11241b060e7eaf3
+git checkout -q -B circleci-project-setup
+git reset --hard 12935c772e6a8e3ca2a0b379e11241b060e7eaf3
+```
+
+`Write-Host 'Hello. Windows'`：
+
+```
+#!powershell.exe -ExecutionPolicy Bypass
+Write-Host 'Hello, Windows'
+Hello, Windows
+CircleCI received exit code 0
+```
+
+`Creating Dummy Artifacts`:
+
+```
+#!powershell.exe -ExecutionPolicy Bypass
+echo "my artifact file" > /tmp/artifact-1;
+mkdir /tmp/artifacts;
+echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
+
+
+    Directory: C:\tmp
+
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+d-----       11/30/2020   6:14 AM                artifacts                                                             
+
+CircleCI received exit code 0
+```
+
+`Uploading artifacts`:
+
+```
+Uploading C:\tmp\artifact-1 to artifact-file
+Uploading C:\tmp\artifact-1 (38 B): DONE
+```
+
+`Uploading artifacts`:
+
+```
+Uploading C:\tmp\artifacts to tmp/artifacts
+Uploading C:\tmp\artifacts\artifact-2 (58 B): DONE
+```
